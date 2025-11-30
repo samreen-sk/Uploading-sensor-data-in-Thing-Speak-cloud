@@ -1,5 +1,4 @@
-# Uploading temperature sensor data in Thing Speak cloud
-
+# EXP:3 Uploading temperature sensor data in Thing Speak cloud
 # AIM:
 To monitor the temperature sensor data in the Thing speak using an ESP32 controller.
 
@@ -71,12 +70,73 @@ Automatically act on your data and communicate using third-party services like T
 
 
 # PROGRAM:
+```
+#include "ThingSpeak.h"
+#include <WiFi.h>
+#include "DHT.h"
+
+char ssid[]="CODING TEST 2.4g";
+char pass[]="incorrect";
+
+const int out=2;
+float temperature=0;
+float humidity=0;
+WiFiClient client;
+DHT dht(out,DHT11);
+
+unsigned long myChannelField=3087402 ;
+const int TemperatureField=1;
+const int HumidityField=2;
+const char* myWriteAPIKey = "OTYF66Y8KMC2PIF1";
+void setup()
+{
+  Serial.begin(115200);
+  ThingSpeak.begin(client);
+  dht.begin();
+  pinMode(out,INPUT);
+}
+void loop()
+{
+  if(WiFi.status() != WL_CONNECTED)
+  {
+    Serial.print("Attempting to connect to SSID:");
+    Serial.println(ssid);
+    while(WiFi.status()!=WL_CONNECTED)
+    {
+      WiFi.begin(ssid,pass);
+      Serial.print(".");
+      delay(5000);
+    }
+    Serial.println("\nConnected.");
+  }
+  temperature = dht.readTemperature();
+  humidity = dht.readHumidity();
+ 
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+  Serial.println(" C");
+
+  Serial.print("Humidity: ");
+Serial.print(humidity);
+  Serial.println(" g.m-3");
+ThingSpeak.setField(TemperatureField,temperature);
+ThingSpeak.setField(HumidityField,humidity);
+ThingSpeak.writeFields(myChannelField,myWriteAPIKey);
+delay(5000);
+}
+```
 
 # CIRCUIT DIAGRAM:
+![WhatsApp Image 2025-11-25 at 18 14 26_ddde258d](https://github.com/user-attachments/assets/3c922b1a-6c81-4558-a4dc-b42ef42ee269)
+
 
 # OUTPUT:
+<img width="1920" height="1080" alt="Screenshot (81)" src="https://github.com/user-attachments/assets/ad0ab3c2-4b8d-405a-a534-da4c733f428e" />
+
 
 # RESULT:
+<img width="1920" height="1080" alt="Screenshot (80)" src="https://github.com/user-attachments/assets/6019f93d-ec45-475e-ad05-bc0c945008ce" />
+
 
 Thus the temperature sensor values are updated in the Thing speak using ESP32 controller.
 
